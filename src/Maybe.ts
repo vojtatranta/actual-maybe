@@ -1,5 +1,6 @@
 type NonNullableMaybe<T, D = never> = T extends Maybe<infer U> ? U extends null ? D : Maybe<U> : D;
 type NonNullablePart<T> = T extends null ? never : T
+type UnpackedMaybe<T> = T extends Maybe<infer U> ? U : T
 
 export class Maybe<T> {
   private value: T | null | undefined
@@ -18,6 +19,21 @@ export class Maybe<T> {
 
   static asInput<NV, R>(callback: (input: NonNullable<NV>) => R): (externalInput: NV) => Maybe<R> {
     return (externalInput: NV): Maybe<R> => Maybe.of<NV>(externalInput).map(callback)
+  }
+
+  static all<T extends unknown[]>(maybies: [...T]): Maybe<{ -readonly [P in keyof T]: UnpackedMaybe<T[P]> }> {
+    const results: unknown[] = []
+
+    const allMaybies = maybies.map((value) => value instanceof Maybe ? value : Maybe.of(value))
+    allMaybies.forEach((maybeValue) => maybeValue.map((truthyValue) => {
+      results.push(truthyValue)
+    }))
+
+    if (results.length === maybies.length) {
+      return Maybe.of(results) as Maybe<{ -readonly [P in keyof T]: UnpackedMaybe<T[P]> }>
+    }
+
+    return Maybe.of(null as unknown as { -readonly [P in keyof T]: UnpackedMaybe<T[P]> })
   }
 
   map<R>(mapper: (value: NonNullable<T>) => R): Maybe<NonNullablePart<R>> {
@@ -51,10 +67,18 @@ export class Maybe<T> {
     return new Maybe<U>(null) as LocalReturn
   }
 
-  getValue(): T | undefined
+  getValue(): T | null | undefined
   getValue<D>(defaultValue: D): NonNullable<T> | D
-  getValue<D>(defaultValue?: D): NonNullable<T> | D | undefined {
-    return this.value || defaultValue
+  getValue<D>(defaultValue?: D): T | D | null | undefined {
+    if (this.value) {
+      return this.value
+    }
+
+    if (typeof defaultValue !== 'undefined') {
+      return defaultValue
+    }
+    
+    return this.value
   }
 }
 
