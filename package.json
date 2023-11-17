@@ -64,14 +64,20 @@
   "scripts": {
     "start": "node scripts/start.js",
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && tsc ./src/index.ts --declaration --outDir ./dist",
+    "build": "npm run clean && tsc --declaration -p ./",
     "prepublish": "npm run clean && npm run build",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "typecheck": "tsc --noEmit -p ./tsconfig.json"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/**/*"
+    "dist/index.js",
+    "dist/index.js.map",
+    "dist/index.d.ts",
+    "dist/Maybe.js",
+    "dist/Maybe.js.map",
+    "dist/Maybe.d.ts"
   ],
   "eslintConfig": {
     "extends": [

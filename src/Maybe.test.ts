@@ -112,7 +112,7 @@ describe("Maybe", () => {
     })
 
     it("string or undefined", () => {
-        const result: undefined | string  = Maybe.of("ahoj").getValue()
+        const result: undefined | string | null  = Maybe.of("ahoj").getValue()
     })
 
     it("nullable or B", () => {
