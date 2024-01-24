@@ -4,11 +4,11 @@
 
 This is another library that mimicks standard Maybe monad known from many functional languages.
 
-It it supplied with standard API such as: `Maybe.of`, `Maybe#map`, `Maybe#flatMap`. For more info, [look at the tests](./src/Maybe.test.ts).
+It it supplied with standard API such as: `Maybe.of`, `Maybe#map`, `Maybe#flatMap`. For more info, [look at the tests](https://github.com/vojtatranta/actual-maybe/blob/master/src/Maybe.test.ts).
 
 ## Docs
 
-For documentation, [look at the tests](./src/Maybe.test.ts). All the cases are tested there along with TS typings.
+For documentation, [look at the tests](https://github.com/vojtatranta/actual-maybe/blob/master/src/Maybe.test.ts). All the cases are tested there along with TS typings.
 
 ## Installation
 
