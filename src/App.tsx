@@ -1,6 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { ChangeEvent } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { Maybe } from "./Maybe";
+
+function FileComponent(props: {
+  doSomethingWithTheFile: (file: File) => void;
+}) {
+  return (
+    <input
+      type="file"
+      onChange={Maybe.asInput((event: ChangeEvent<HTMLInputElement>) =>
+        Maybe.of(event.target.files?.[0]).map((truthyFile) =>
+          props.doSomethingWithTheFile(truthyFile)
+        )
+      )}
+    />
+  );
+}
 
 function App() {
   return (
@@ -18,6 +34,9 @@ function App() {
         >
           Learn React
         </a>
+        <form>
+          <FileComponent doSomethingWithTheFile={console.log} />
+        </form>
       </header>
     </div>
   );
