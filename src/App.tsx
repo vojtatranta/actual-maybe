@@ -3,16 +3,16 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Maybe } from "./Maybe";
 
-function FileComponent(props: {
+function FilePickerComponent({
+  doSomethingWithTheFile,
+}: {
   doSomethingWithTheFile: (file: File) => void;
 }) {
   return (
     <input
       type="file"
       onChange={Maybe.asInput((event: ChangeEvent<HTMLInputElement>) =>
-        Maybe.of(event.target.files?.[0]).map((truthyFile) =>
-          props.doSomethingWithTheFile(truthyFile)
-        )
+        Maybe.of(event.target.files?.[0]).map(doSomethingWithTheFile)
       )}
     />
   );
@@ -35,7 +35,7 @@ function App() {
           Learn React
         </a>
         <form>
-          <FileComponent doSomethingWithTheFile={console.log} />
+          <FilePickerComponent doSomethingWithTheFile={console.log} />
         </form>
       </header>
     </div>
