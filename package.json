@@ -1,6 +1,7 @@
 {
   "name": "actual-maybe",
   "version": "0.1.1",
+  "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.16.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
