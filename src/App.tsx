@@ -12,7 +12,9 @@ function FilePickerComponent({
     <input
       type="file"
       onChange={Maybe.asInput((event: ChangeEvent<HTMLInputElement>) =>
-        Maybe.of(event.target.files?.[0]).map(doSomethingWithTheFile)
+        Maybe.fromFirst(Array.from(event.target.files ?? [])).map(
+          doSomethingWithTheFile
+        )
       )}
     />
   );
