@@ -173,5 +173,125 @@ describe("Maybe", () => {
         const result: Maybe<number> = inputAsMaybeFunc("test");
       });
     });
+
+    describe("extraction of array elements", () => {
+      describe("fromFirst()", () => {
+        it("fromFirst()", () => {
+          const result: Maybe<string> = Maybe.fromFirst(["a", "b", "c"]);
+
+          expect(result.getValue()).toEqual("a");
+        });
+
+        it("should mantain the constant type of the first element", () => {
+          const result = Maybe.fromFirst([
+            "a" as const,
+            "b" as const,
+            "c" as const,
+          ] as const);
+
+          result.map((value: "a") => {
+            expect(value).toEqual("a");
+          });
+        });
+
+        it("should mantain the type of the first element", (callback) => {
+          const result = Maybe.fromFirst(["a", "b", "c"]);
+
+          result.map((value: string) => {
+            expect(value).toEqual("a");
+            callback();
+          });
+        });
+
+        it("should apply the default value when the first element is null", () => {
+          const result = Maybe.fromFirst([null, "b", "c"]);
+
+          const dConst: string = result.getValue("d");
+
+          expect(dConst).toEqual("d");
+        });
+      });
+
+      describe("fromLast()", () => {
+        it("should get the last element", () => {
+          const result: Maybe<string> = Maybe.fromLast(["a", "b", "c"]);
+
+          expect(result.getValue()).toEqual("c");
+        });
+
+        it("should map the last element", (callback) => {
+          const result = Maybe.fromLast([
+            "a" as const,
+            "b" as const,
+            "c" as const,
+          ]);
+
+          result.map((value: "c") => {
+            expect(value).toEqual("c");
+            callback();
+          });
+        });
+
+        it("should apply the default value when the last element is null", () => {
+          const result = Maybe.fromLast(["a", "b", null]);
+
+          expect(result.getValue("d")).toEqual("d");
+        });
+
+        it("should apply the default value when the last element is undefined", () => {
+          const result = Maybe.fromLast(["b", "c", undefined]);
+
+          expect(result.getValue("X")).toEqual("X");
+        });
+
+        it("should mantain the constant type of the last element", (callback) => {
+          const result = Maybe.fromLast([
+            "a" as const,
+            "b" as const,
+            "c" as const,
+          ] as const);
+
+          result.map((value: "c") => {
+            expect(value).toEqual("c");
+            callback();
+          });
+        });
+      });
+
+      describe("fromNth()", () => {
+        it("should get the nth element", () => {
+          const result: Maybe<string> = Maybe.fromNth(["a", "b", "c"], 1);
+
+          expect(result.getValue()).toEqual("b");
+        });
+
+        it("should map the nth element", (callback) => {
+          const result = Maybe.fromNth(
+            ["a" as const, "b" as const, "c" as const],
+            1
+          );
+
+          result.map((value: string) => {
+            expect(value).toEqual("b");
+            callback();
+          });
+        });
+
+        it("should apply the default value when the nth element is null", () => {
+          const result = Maybe.fromNth(["a", "b", null], 2);
+
+          expect(result.getValue("X")).toEqual("X");
+        });
+
+        it("should mantain the type of the nth element in a mixed array", (callback) => {
+          const result = Maybe.fromNth(["a", "b", 123, null], 2);
+
+          result.map((value: string | number) => {
+            expect(value).toEqual(123);
+            callback();
+          });
+        });
+      });
+    });
   });
 });
