@@ -48,6 +48,18 @@ describe("Maybe", () => {
       expect(result).toEqual("a");
     });
 
+    it("should return the default value type when the mapping returns falsy", () => {
+      const result: "b" = Maybe.of("a" as const)
+        .map(() => null)
+        .getValue("b");
+      expect(result).toEqual("b");
+    });
+
+    it("should return the default value type when the value is null", () => {
+      const result: "b" = Maybe.of(null).getValue("b");
+      expect(result).toEqual("b");
+    });
+
     it("should return original when default parameter is NOT passed to getValue()", () => {
       const a = "a" as const;
 
