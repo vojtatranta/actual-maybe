@@ -40,6 +40,23 @@ describe("Maybe", () => {
       expect(result).toEqual("b");
     });
 
+    it("should narrow a chained value properly", () => {
+      const objectWithFalsy: {
+        falsyValue: string | null | undefined;
+      }[] = [
+        {
+          falsyValue: "string",
+        },
+      ];
+
+      const result = Maybe.of(objectWithFalsy[0])
+        .map(({ falsyValue }) => falsyValue)
+        .map((value: string) => value)
+        .getValue("not-string");
+
+      expect(result).toEqual("string");
+    });
+
     it("should return original when default parameter is passed to getValue()", () => {
       const a = "a" as const;
       const b = "b" as const;
@@ -64,6 +81,16 @@ describe("Maybe", () => {
       const a = "a" as const;
 
       const result: "a" | undefined | null = Maybe.of(a).getValue();
+      expect(result).toEqual("a");
+    });
+    it("should narrow undefined value to the truthy value in map()", () => {
+      const a = "a" as const;
+
+      const result: "a" | undefined | null = Maybe.of(a)
+        .map((a: "a") => {
+          return a;
+        })
+        .getValue();
       expect(result).toEqual("a");
     });
 
@@ -111,6 +138,29 @@ describe("Maybe", () => {
           .getValue("c" as const);
 
         expect(value).toEqual("c");
+        callback();
+      });
+
+      it("should narrow nullable value in to non nullable", (callback) => {
+        const nullableA: string | null | undefined = "a";
+        const value = Maybe.all([nullableA])
+          .map(([truthyA]: [string]) => truthyA)
+          .getValue();
+
+        expect(value).toEqual("a");
+        callback();
+      });
+
+      it("should narrow multiple nullable values in to non nullable", (callback) => {
+        const nullableA: string | null = "a";
+        const nullableB: string | null = "b";
+        const value = Maybe.all([nullableA, nullableB])
+          .map(([truthyA, truthyB]: [string, string]) => {
+            return "a";
+          })
+          .getValue("a");
+
+        expect(value).toEqual("a");
         callback();
       });
     });
@@ -192,6 +242,23 @@ describe("Maybe", () => {
           const result: Maybe<string> = Maybe.fromFirst(["a", "b", "c"]);
 
           expect(result.getValue()).toEqual("a");
+        });
+
+        it("should narrow a chained value properly", () => {
+          const objectWithFalsy: {
+            falsyValue: string | null | undefined;
+          }[] = [
+            {
+              falsyValue: "string",
+            },
+          ];
+
+          const result = Maybe.fromFirst(objectWithFalsy)
+            .map(({ falsyValue }) => falsyValue)
+            .map((value: string) => value)
+            .getValue("not-string");
+
+          expect(result).toEqual("string");
         });
 
         it("should mantain the constant type of the first element", () => {
