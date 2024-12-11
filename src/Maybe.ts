@@ -1,9 +1,8 @@
 type NonNullableMaybe<T, D = never> = T extends Maybe<infer U>
-  ? U extends null
+  ? U extends null | undefined
     ? D
     : Maybe<U>
   : D;
-type NonNullablePart<T> = T extends null ? never : T;
 type UnpackedMaybe<T> = T extends Maybe<infer U> ? U : T;
 type Last<T extends any[] | readonly any[]> = T extends [...infer Rest, infer L]
   ? L
@@ -27,7 +26,7 @@ export class Maybe<T> {
   }
 
   static asInput<NV, R>(
-    callback: (input: NonNullablePart<NV>) => R
+    callback: (input: NonNullable<NV>) => R
   ): (externalInput: NV) => Maybe<R> {
     return (externalInput: NV): Maybe<R> =>
       Maybe.of<NV>(externalInput).map(callback);
@@ -77,28 +76,28 @@ export class Maybe<T> {
     return Maybe.of<T[N]>(someArray?.[n]);
   }
 
-  map<R>(mapper: (value: NonNullablePart<T>) => R): Maybe<NonNullablePart<R>> {
+  map<R>(mapper: (value: NonNullable<T>) => R): Maybe<NonNullable<R>> {
     if (this.value != null) {
-      return new Maybe<NonNullablePart<R>>(
-        mapper(this.value as NonNullablePart<T>) as NonNullablePart<R>
+      return new Maybe<NonNullable<R>>(
+        mapper(this.value as NonNullable<T>) as NonNullable<R>
       );
     }
 
-    return new Maybe<NonNullablePart<R>>(null);
+    return new Maybe<NonNullable<R>>(null);
   }
 
   // NOTE: flatMap() "eats" the incomming maybe and will use the value of the current maybe as default
   // of the maybe returned by the Mapper()
   // you can safely use Maybies in the flatMap() function return value as if it was a direct value
   flatMap<U>(
-    mapper: (value: NonNullablePart<T>) => U
+    mapper: (value: NonNullable<T>) => U
   ): NonNullableMaybe<U extends Maybe<infer R> ? Maybe<R> : Maybe<U>> {
     type LocalReturn = NonNullableMaybe<
       U extends Maybe<infer R> ? Maybe<R> : Maybe<U>
     >;
 
     if (this.value != null) {
-      const result = mapper(this.value as NonNullablePart<T>);
+      const result = mapper(this.value as NonNullable<T>);
 
       if (result instanceof Maybe) {
         return new Maybe<U>(result.getValue(this.value)) as LocalReturn;
@@ -111,7 +110,7 @@ export class Maybe<T> {
   }
 
   getValue(): T | null | undefined;
-  getValue<D>(defaultValue: D): NonNullablePart<T> | D;
+  getValue<D>(defaultValue: D): NonNullable<T> | D;
   getValue<D>(defaultValue?: D): T | D | null | undefined {
     if (this.value) {
       return this.value;
