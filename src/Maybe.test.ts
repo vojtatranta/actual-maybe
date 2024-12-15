@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Maybe } from "./Maybe";
 
 class A {}
@@ -371,6 +373,53 @@ describe("Maybe", () => {
           });
         });
       });
+    });
+  });
+
+  describe("orNull", () => {
+    it("should return the value when it exists", () => {
+      const value = "test" as const;
+      const result = Maybe.of(value).orNull();
+      expect(result).toEqual("test");
+    });
+
+    it("should return null when value is undefined", () => {
+      const result = Maybe.of(undefined).orNull();
+      expect(result).toEqual(null);
+    });
+
+    it("should return null when value is null", () => {
+      const result = Maybe.of(null).orNull();
+      expect(result).toEqual(null);
+    });
+  });
+
+  describe("andThen", () => {
+    it("should transform value like map() when value exists", () => {
+      const value = "test" as const;
+      const result = Maybe.of(value)
+        .andThen((str) => str.length)
+        .getValue();
+      expect(result).toEqual(4);
+    });
+
+    it("should return Maybe with null when value is null", () => {
+      const a: string | null = null;
+      const result = Maybe.of(a)
+        .andThen((str: never) => {
+          return str;
+        })
+        .getValue();
+      expect(result).toEqual(null);
+    });
+
+    it("should chain multiple transformations", () => {
+      const value = "test" as const;
+      const result = Maybe.of(value)
+        .andThen((str) => str.length)
+        .andThen((len) => len * 2)
+        .getValue();
+      expect(result).toEqual(8);
     });
   });
 });

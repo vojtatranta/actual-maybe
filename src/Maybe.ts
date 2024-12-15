@@ -86,6 +86,10 @@ export class Maybe<T> {
     return new Maybe<NonNullable<R>>(null);
   }
 
+  andThen<R>(mapper: (value: NonNullable<T>) => R): Maybe<NonNullable<R>> {
+    return this.map(mapper);
+  }
+
   // NOTE: flatMap() "eats" the incomming maybe and will use the value of the current maybe as default
   // of the maybe returned by the Mapper()
   // you can safely use Maybies in the flatMap() function return value as if it was a direct value
@@ -107,6 +111,10 @@ export class Maybe<T> {
     }
 
     return new Maybe<U>(null) as LocalReturn;
+  }
+
+  orNull(): T | null {
+    return this.value ?? null;
   }
 
   getValue(): T | null | undefined;
