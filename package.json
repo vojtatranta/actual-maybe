@@ -70,7 +70,7 @@
     "start": "node scripts/start.js",
     "clean": "rm -rf ./dist",
     "build": "npm run clean && tsc --declaration -p ./",
-    "prepublish": "npm run clean && npm run build",
+    "prepublishOnly": "npm run clean && npm run build",
     "test": "node scripts/test.js",
     "typecheck": "tsc --noEmit -p ./tsconfig.json"
   },
